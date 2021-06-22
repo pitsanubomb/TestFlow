@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <title>TestFlow</title>
+  </head>
+  <body style="margin: 0%">
+    <div class="container">
+      <div class="row row-cols-8 mt-5" id="app"></div>
+    </div>
+    <nav class="navbar fixed-bottom navbar-light w-100 bg-white rounded-top">
+      <div class="d-flex justify-content-center w-100 bg-white rounded-top">
+        <div class="w-25 text-center">
+          <a class="text-dark" href="/">
+            <span class="material-icons">home</span>
+          </a>
+        </div>
+        <div class="w-25 text-center">
+          <a class="text-dark" href="/">
+            <span class="material-icons"> account_circle </span>
+          </a>
+        </div>
+        <div class="w-25 text-center">
+          <a class="text-dark" href="/">
+            <span class="material-icons"> play_circle </span>
+          </a>
+        </div>
+        <div class="w-25 text-center">
+          <a class="text-dark" href="/">
+            <span class="material-icons"> dashboard_customize </span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </body>
+</html>
+
+<script>
+  const app = document.getElementById(`app`);
+  // const iFrame = document.getElementById("111");
+
+  fetch(`/api/game/pg?lang=en-EN`)
+    .then((res) => res.json())
+    .then((d) => {
+      console.log(d);
+      const data = d.dt.dagl;
+      data.forEach((element) => {
+        let col = document.createElement("div");
+        col.className = "col";
+        col.onclick = () => {
+          fetch(`/api/game/auth/pg/${element.gid.toString()}`)
+            .then((response) => response.json())
+            .then((_data) => {
+              //   console.log("Success:", _data);
+              // console.log()
+              if (!_data.errorcode) {
+                window.location.href = `/games/?vendor=pg&gId=${element.pgid.toString()}`;
+                // iFrame.src = _data.url;
+                // iFrame.style.display = "block";
+                // app.style = "display:none";
+              } else {
+                  console.log(_data)
+                alert(`Now Game is Fix.  . .`);
+              }
+              // document.body.appendChild(iFrame)
+              // console.log(iFrame)
+              // document.getElementsByName("body")[0].appendChild(iFrame);
+            })
+            .catch((error) => {
+              alert("Error");
+              console.error("Error:", error);
+            });
+        };
+
+        let mainCard = document.createElement("div");
+        mainCard.className = "card";
+        mainCard.style = "width: 18rem;";
+
+        let img = document.createElement("img");
+        img.src = `${element.grl.pgurl[3]}`;
+
+        let cardBody = document.createElement("div");
+        cardBody.className = "card-body";
+
+        let cardTitle = document.createElement("h5");
+        cardTitle.className = "card-title";
+        cardTitle.innerText = `${element.gn}`;
+
+        mainCard.appendChild(img);
+        mainCard.appendChild(cardBody);
+        cardBody.appendChild(cardTitle);
+        col.appendChild(mainCard);
+        app.appendChild(col);
+        // console.log(element);
+      });
+    });
+</script>
